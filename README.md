@@ -8,9 +8,7 @@ A fully responsive, feature-rich Single Page Application for searching movies, s
 
 ## Screenshot
 
-> *(Add a screenshot here after deployment)*
-
-![CineSearch Screenshot](screenshot.png)
+<img width="2551" height="1476" alt="Ekran görüntüsü 2026-04-15 114610" src="https://github.com/user-attachments/assets/4eeba4cd-6f04-4376-8b24-a842ec54cb86" />
 
 ---
 
