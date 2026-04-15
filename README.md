@@ -1,86 +1,106 @@
-# OMDB Movie Search Project
+# CineSearch — OMDB Movie & Series Explorer
 
-## How to Set Up Your Repository
+A fully responsive, feature-rich Single Page Application for searching movies, series and episodes using the [OMDb API](https://www.omdbapi.com/). Built as part of the i2i Systems internship application.
 
-**WARNING**: This is a template project. Do not fork this repository.
-
-Please follow the visual steps below to create and set up the project repository on your own GitHub profile.
-
-1. Click the **"Use this template"** button at the top right of this page.
-
-<img width="1920" height="1080" alt="Use this template example" src="https://github.com/user-attachments/assets/137c0f6c-bc6c-4584-8752-02c067051438" />
-<br><br>
-
-2. Select **"Create a new repository"** to generate your own public repository for this task.
-
-<img width="1920" height="1080" alt="Create a new repository" src="https://github.com/user-attachments/assets/87b9032e-6e10-4679-88bb-c42a98894edf" />
-<br><br>
-
-3. Name your repository as **"omdb-project"** and click the **"Create repository"** button.
-
-<img width="1920" height="1080" alt="Create repository" src="https://github.com/user-attachments/assets/dd808d69-6ade-4903-8f77-831b643dbdff" />
-<br><br>
-
-Upload all of your solutions to `github.com/yourusername/omdb-project`.
+**Live Demo → [mericbas.github.io/omdb-project](https://mericbas.github.io/omdb-project)**
 
 ---
 
-## Overview
+## Screenshot
 
-This project is designed to evaluate your coding skills in web development. You are required to build a simple web application that consumes the [OMDB API](http://www.omdbapi.com/).
+> *(Add a screenshot here after deployment)*
 
-* The application must be a fully responsive **Single Page Application (SPA)** and should display movie details such as **title, year, genre, director, and poster**.
-* The application must be written using **HTML, CSS, and JavaScript**.
-* If your project meets all the requirements, you may extend it with additional functionalities.
-* After development, you must deploy the project using [GitHub Pages](https://pages.github.com). **Projects that are not deployed to GitHub Pages will not be evaluated and will receive 0 points.**
-
-You must **create your own repository using this template** and upload your work there. 
-Do **not** attempt to push changes directly to this repository or any of its original branches.
+![CineSearch Screenshot](screenshot.png)
 
 ---
 
-## Functional Requirements
+## Features
 
-1. **Movie Search Input**
-   - Users must be able to enter a movie name and trigger a search.
-   - A search box and button are sufficient, but adding well-composed UI elements (e.g., filters similar to sahibinden.com) will earn bonus points.
-
-2. **Display Movie Details**
-   - Show at least: Title, Year, Genre, Director, and Poster image.
-   - The design is up to you.
-
-3. **Error Handling**
-   - If the movie is not found or the API returns an error, display a clear message to the user.
-   - Unhandled errors will result in point deductions.
-
-4. **Multiple Searches**
-   - Users should be able to perform multiple searches without refreshing the page.
-   - If the page is refreshed, the last search view should be retained (e.g., using LocalStorage or URL parameters).
-
-5. **Backend Proxy (Optional)**
-   - If you implement a backend, it should handle API requests and return clean JSON to the frontend.
+| Feature | Detail |
+|---|---|
+| **Movie Search** | Search by title with real-time results from OMDb API |
+| **Advanced Filters** | Filter by type (Movie / Series / Episode) and release year |
+| **Results Grid** | Responsive card grid — 1 → 2 → 3 → 4 columns |
+| **Poster Handling** | Shows poster image; falls back to a styled placeholder when unavailable |
+| **Detail Modal** | Full info overlay: ratings (IMDb / RT / Metascore), plot, cast, awards, box office |
+| **Pagination** | Page controls with smart ellipsis; uses API `totalResults` |
+| **Search Persistence** | Last search (query, filters, results, page) saved to `localStorage` and restored on reload |
+| **In-Memory Cache** | Repeat searches served instantly from JS cache, no extra network requests |
+| **Debounce** | Rapid button clicks trigger only one API call |
+| **Error Handling** | Distinct messages for empty query, no results, and network failures |
+| **Keyboard & A11y** | ESC closes modal; Enter opens card; ARIA roles; focus management |
+| **Dark Theme** | CSS custom properties, smooth transitions, hover effects |
+| **Responsive** | Mobile-first; modal goes near-fullscreen on small screens |
 
 ---
 
-## Non-Functional Requirements
+## Tech Stack
 
-1. **Performance**
-   - API calls should be efficient. Avoid unnecessary repeated requests.
+- **HTML5** — semantic markup
+- **CSS3** — custom properties, Grid, Flexbox, `clamp()`, `@media`, `@keyframes`
+- **JavaScript (ES6+)** — `async/await`, `const/let`, arrow functions, template literals, destructuring, `Map`, `URLSearchParams`
+- **OMDb API** — movie data source
+- **GitHub Pages** — static hosting
 
-2. **Usability**
-   - The interface should be simple, intuitive, and user-friendly.
-   - The design is up to you.
-
-3. **Portability**
-   - The application should work across modern browsers and be responsive for different screen sizes.
-
-4. **Maintainability**
-   - Code should be modular, well-documented, and easy to extend.
+No frameworks, no build tools, no dependencies.
 
 ---
 
-## Deliverables & Submission
+## Project Structure
 
-Once you have completed the project, ensure you have the following ready:
-- A **public GitHub repository** containing your project code (created via the template).
-- A **hosted version** of the project deployed on GitHub Pages.
+```
+omdb-project/
+├── index.html        # App shell & markup
+├── css/
+│   └── style.css     # All styles (dark theme, layout, animations)
+├── js/
+│   └── app.js        # App logic (state, API, render, cache, storage, events)
+└── README.md
+```
+
+---
+
+## How to Run Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/mericbas/omdb-project.git
+cd omdb-project
+
+# Option 1 — open directly in browser
+open index.html
+
+# Option 2 — serve with any static server (avoids potential CORS quirks)
+npx serve .
+# or
+python -m http.server 8080
+```
+
+Then navigate to `http://localhost:8080` (or whatever port your server uses).
+
+---
+
+## Architecture Notes
+
+`app.js` is organised into clearly separated layers:
+
+```
+CONFIG       — API key, base URL, constants (no magic numbers)
+STATE        — single source-of-truth object + setState()
+CACHE        — Map-based in-memory cache keyed by query+type+year+page
+STORAGE      — localStorage helpers (save / load)
+API          — fetchSearchResults() + fetchTitleDetail() with try/catch
+RENDER       — buildMovieCard(), buildModalHTML(), renderResults()
+UI HELPERS   — show/hide individual UI regions
+MODAL        — openModal(), closeModal()
+PAGINATION   — buildPageRange(), renderPagination(), goToPage()
+SEARCH       — performSearch() orchestrator + debouncedSearch()
+EVENTS       — all addEventListener() bindings in one place
+INIT         — DOMContentLoaded bootstrap
+```
+
+---
+
+## API Attribution
+
+This product uses the **[OMDb API](https://www.omdbapi.com/)** but is not endorsed or certified by OMDb.
